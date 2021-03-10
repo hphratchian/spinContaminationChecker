@@ -1,0 +1,16 @@
+%chk=LiHplus_ccpvdz
+#p test uhf cc-pvdz guess=mix output=mat
+
+Li-H+ at long distance with broken-symmetry result (2.5 A).
+
+1  2
+li
+h  1  2.5
+
+LiHplus_ccpvdz.mat
+
+
+--link1--
+%chk=LiHplus_ccpvdz
+#p test uhf cc-pvdz geom=allcheck guess(read,biorthog,only,save) pop=orbitals
+

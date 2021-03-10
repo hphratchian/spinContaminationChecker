@@ -1,0 +1,11 @@
+%chk=LiHplus_ccpvtz
+#p test uhf cc-pvtz guess=mix output=mat
+
+Li-H+ at long distance with broken-symmetry result (2.5 A).
+
+1  2
+li
+h  1  2.5
+
+LiHplus_ccpvtz.mat
+
