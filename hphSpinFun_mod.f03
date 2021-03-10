@@ -60,6 +60,53 @@
       end subroutine commandLineArgs_direct
 !
 !
+      subroutine commandLineArgs_gaussian(IOut,matrixFilename,iPrint,nOMP)
+!
+!     This routine reads the command line and returns the name of the matrix
+!     element file, the print level flag, and the requested number of openMP
+!     processes in cases when the program is called directly from Gaussian.
+!     Additionally, this subroutine connects file unit iOut to the Gaussian
+!     message file so that the output from this program will be put into the
+!     Gaussian log file.
+!
+!
+      implicit none
+      integer(kind=int64),intent(in)::iOut
+      character(len=512),intent(out)::matrixFilename
+      integer(kind=int64),intent(out)::iPrint,nOMP
+      integer(kind=int64)::nCommands,iOff,iError
+      character(len=512)::tmpString
+!
+!     Do the work...
+!
+      iOff = 1
+      nCommands = command_argument_count()
+
+      
+      call get_command_argument(4+iOff,tmpString)
+      Open(Unit=iOut,File=TRIM(tmpString),Status='unknown',IOStat=IError)
+
+      
+      
+      call get_command_argument(6+iOff,matrixFilename)
+      iPrint = 0
+      nOMP = 1
+!      if(nCommands.ge.2) then
+!        call get_command_argument(2,tmpString)
+!        read(tmpString,*) iPrint
+!      endIf
+!      if(nCommands.ge.3) then
+!        call get_command_argument(3,tmpString)
+!        read(tmpString,*) nOMP
+!        if(nOMP.le.0) call mqc_error('OMP number must be >= 1.')
+!      endIf
+!      if(nCommands.gt.3)  &
+!        call mqc_error('More than 3 command line arguments provided.')
+!
+      return
+      end subroutine commandLineArgs_gaussian
+!
+!
       subroutine formFock(nBasis,density,ERIs,coulomb)
 !
 !     This subroutine forms a Coulomb matrix from a density matrix and ERIs. The

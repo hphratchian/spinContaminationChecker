@@ -35,7 +35,7 @@ INCLUDE 'hphSpinFun_mod.f03'
       real(kind=real64),dimension(:,:),allocatable::distanceMatrix,  &
         S2_Mat,tmp2NBasisSq,tmpEVecs,tmpMatrix
       character(len=512)::matrixFilename,tmpString
-      logical::DEBUG=.false.
+      logical::DEBUG=.false.,gaussianCall
       type(mqc_gaussian_unformatted_matrix_file)::GMatrixFile
       type(MQC_Variable)::tmpMQCvar
       type(MQC_Scalar)::tmpMQCvar1,tmpMQCvar2,tmpMQCvar3
@@ -78,9 +78,28 @@ INCLUDE 'hphSpinFun_mod.f03'
 !     Read the command line arguments.
 !
       nCommands = command_argument_count()
+
+!hph+
+!      write(iOut,*)' Hrant - nCommands = ',nCommands
+!      do i = 1,nCommands
+!        call get_command_argument(i,tmpString)
+!        write(iOut,*)TRIM(tmpString)
+!      endDo
+!hph-
+
       if(nCommands.lt.1)  &
         call mqc_error('No command line arguments provided. At least one command line argument is required giving the input Gaussian matrix element file name.')
-      call commandLineArgs_direct(matrixFilename,iPrint,nOMP)
+      call get_command_argument(1,tmpString)
+      if(TRIM(tmpString).eq.'-g') then
+        gaussianCall = .true.
+      else
+        gaussianCall = .false.
+      endIf
+      if(gaussianCall) then
+        call commandLineArgs_gaussian(iOut,matrixFilename,iPrint,nOMP)
+      else
+        call commandLineArgs_direct(matrixFilename,iPrint,nOMP)
+      endIf
       write(iOut,1020) iPrint
       if(iPrint.eq.-1) then
         iPrint = 10
@@ -118,10 +137,10 @@ INCLUDE 'hphSpinFun_mod.f03'
       else
         FMatrixBeta  = FMatrixAlpha
       endIf
-      call GMatrixFile%getArray('ALPHA DENSITY MATRIX',mqcVarOut=PMatrixAlpha)
+      call GMatrixFile%getArray('ALPHA SCF DENSITY MATRIX',mqcVarOut=PMatrixAlpha)
       call GMatrixFile%getArray('ALPHA MO COEFFICIENTS',mqcVarOut=CAlpha)
       if(GMatrixFile%isUnrestricted()) then
-        call GMatrixFile%getArray('BETA DENSITY MATRIX',mqcVarOut=PMatrixBeta)
+        call GMatrixFile%getArray('BETA SCF DENSITY MATRIX',mqcVarOut=PMatrixBeta)
         call GMatrixFile%getArray('BETA MO COEFFICIENTS',mqcVarOut=CBeta)
       else
         PMatrixBeta = PMatrixAlpha
