@@ -79,26 +79,13 @@ INCLUDE 'hphSpinFun_mod.f03'
 !
       nCommands = command_argument_count()
       if(nCommands.lt.1)  &
-        call mqc_error('No command line arguments provided. The input Gaussian matrix file name is required.')
-      call get_command_argument(1,matrixFilename)
-      iPrint = 0
-      nOMP = 1
-      if(nCommands.ge.2) then
-        call get_command_argument(2,tmpString)
-        read(tmpString,*) iPrint
-        if(iPrint.eq.-1) then
-          DEBUG = .true.
-          iPrint = 10
-        endIf
-      endIf
+        call mqc_error('No command line arguments provided. At least one command line argument is required giving the input Gaussian matrix element file name.')
+      call commandLineArgs_direct(matrixFilename,iPrint,nOMP)
       write(iOut,1020) iPrint
-      if(nCommands.ge.3) then
-        call get_command_argument(3,tmpString)
-        read(tmpString,*) nOMP
-        if(nOMP.le.0) call mqc_error('OMP number must be >= 1.')
+      if(iPrint.eq.-1) then
+        iPrint = 10
+        DEBUG = .true.
       endIf
-      if(nCommands.gt.3)  &
-        call mqc_error('More than 3 command line arguments provided.')
       write(iOut,1030) nOMP
       call omp_set_num_threads(nOMP)
 !

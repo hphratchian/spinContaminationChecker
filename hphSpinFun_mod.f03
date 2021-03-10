@@ -25,6 +25,41 @@
       CONTAINS
 !
 !
+      subroutine commandLineArgs_direct(matrixFilename,iPrint,nOMP)
+!
+!     This routine reads the command line and returns the name of the matrix
+!     element file, the print level flag, and the requested number of openMP
+!     processes. This routine is meant for use in direct runs by a user.
+!
+!
+      implicit none
+      character(len=512),intent(out)::matrixFilename
+      integer(kind=int64),intent(out)::iPrint,nOMP
+      integer(kind=int64)::nCommands
+      character(len=512)::tmpString
+!
+!     Do the work...
+!
+      nCommands = command_argument_count()
+      call get_command_argument(1,matrixFilename)
+      iPrint = 0
+      nOMP = 1
+      if(nCommands.ge.2) then
+        call get_command_argument(2,tmpString)
+        read(tmpString,*) iPrint
+      endIf
+      if(nCommands.ge.3) then
+        call get_command_argument(3,tmpString)
+        read(tmpString,*) nOMP
+        if(nOMP.le.0) call mqc_error('OMP number must be >= 1.')
+      endIf
+      if(nCommands.gt.3)  &
+        call mqc_error('More than 3 command line arguments provided.')
+!
+      return
+      end subroutine commandLineArgs_direct
+!
+!
       subroutine formFock(nBasis,density,ERIs,coulomb)
 !
 !     This subroutine forms a Coulomb matrix from a density matrix and ERIs. The
