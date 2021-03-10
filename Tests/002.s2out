@@ -1,0 +1,80 @@
+ Enter Test Program scfEnergyTerms.
+   Print Level:  0
+   Number OMPs:   1
+
+   Matrix File: 002.mat
+ nAtoms=   2
+<P(Alpha)S>= 1
+<P(Beta )S>= 1
+<P(Total)S>= 2.00000
+electronic energy (no Vnn) = -1.20511
+<P.K> = 1.02084
+<P.V> = -2.43991
+<P.H> = -1.41907
+EE, <P.F>-<P.H> = 0.21396
+ Atomic Coordinates (Angstrom)
+     1  H       0.0000    0.0000    0.0000
+     2  H       0.0000    0.0000    2.5000
+ Nuclear Repulsion Energy =             0.211671
+Total SCF Energy = -0.99344
+ 
+ 
+  Hrant - About to call Gen_Det_Str.
+ Gen_Det_Str CPU Time:         0.00 s.
+ 
+  nBasis    =                         4
+  nEalpha   =                         1
+  nEbeta    =                         1
+  nDetAlpha =                         4
+  nDetBeta  =                         4
+  nDetTotal =                        16
+ 
+  nBit_Ints =                         1
+ 
+ S2 Matrix String Pre-Processing CPU Time:         0.00 s.
+ S2 Matrix Formation CPU Time:         0.00 s.
+  k =                       136
+  nDetTT =                       136
+ 
+ 
+  Calling DSPEV.
+ S2 Diagonalization CPU Time:         0.00 s.
+  After DSPEV, i =                         0
+
+ S2 EVals
+       1        0.000000
+       2        0.000000
+       3        0.000000
+       4        0.000000
+       5        0.000000
+       6        0.000000
+       7        0.000000
+       8        0.000000
+       9        0.000000
+      10        0.000000
+      11        2.000000
+      12        2.000000
+      13        2.000000
+      14        2.000000
+      15        2.000000
+      16        2.000000
+ 
+  nDetTotal =                        16
+ Non-Zero Projection (    0.1256) onto Reference by EVec          1. EVal =     0.0000
+ Non-Zero Projection (   -0.1557) onto Reference by EVec          2. EVal =     0.0000
+ Non-Zero Projection (   -0.4435) onto Reference by EVec          3. EVal =     0.0000
+ Non-Zero Projection (    0.1342) onto Reference by EVec          5. EVal =     0.0000
+ Non-Zero Projection (    0.1143) onto Reference by EVec          6. EVal =     0.0000
+ Non-Zero Projection (    0.2309) onto Reference by EVec          7. EVal =     0.0000
+ Non-Zero Projection (    0.4000) onto Reference by EVec          8. EVal =     0.0000
+ Non-Zero Projection (   -0.0743) onto Reference by EVec          9. EVal =     0.0000
+ Non-Zero Projection (    0.1505) onto Reference by EVec         10. EVal =     0.0000
+ Non-Zero Projection (    0.3095) onto Reference by EVec         11. EVal =     2.0000
+ Non-Zero Projection (    0.2173) onto Reference by EVec         12. EVal =     2.0000
+ Non-Zero Projection (    0.4913) onto Reference by EVec         13. EVal =     2.0000
+ Non-Zero Projection (   -0.1972) onto Reference by EVec         14. EVal =     2.0000
+ Non-Zero Projection (    0.1189) onto Reference by EVec         15. EVal =     2.0000
+ Non-Zero Projection (   -0.2297) onto Reference by EVec         16. EVal =     2.0000
+
+ END OF TEST PROGRAM scfEnergyTerms.
+ TOTAL JOB CPU Time:         0.00 s.

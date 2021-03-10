@@ -28,5 +28,10 @@
 
 # Executables
 *.exe
-*.out
 *.app
+
+# Gaussian files
+*.log
+*.chk
+*.rwf
+*.mat

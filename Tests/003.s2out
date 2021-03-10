@@ -1,0 +1,300 @@
+ Enter Test Program scfEnergyTerms.
+   Print Level:  0
+   Number OMPs:   1
+
+   Matrix File: 003.mat
+ nAtoms=   2
+<P(Alpha)S>= 2
+<P(Beta )S>= 2
+<P(Total)S>= 4.00000
+electronic energy (no Vnn) = -8.43359
+<P.K> = 8.08451
+<P.V> = -19.62590
+<P.H> = -11.54140
+EE, <P.F>-<P.H> = 3.10780
+ Atomic Coordinates (Angstrom)
+     1  Li      0.0000    0.0000    0.0000
+     2  H       0.0000    0.0000    2.5000
+ Nuclear Repulsion Energy =             0.635013
+Total SCF Energy = -7.79858
+ 
+ 
+  Hrant - About to call Gen_Det_Str.
+ Gen_Det_Str CPU Time:         0.00 s.
+ 
+  nBasis    =                         6
+  nEalpha   =                         2
+  nEbeta    =                         2
+  nDetAlpha =                        15
+  nDetBeta  =                        15
+  nDetTotal =                       225
+ 
+  nBit_Ints =                         1
+ 
+ S2 Matrix String Pre-Processing CPU Time:         0.00 s.
+ S2 Matrix Formation CPU Time:         0.02 s.
+  k =                     25425
+  nDetTT =                     25425
+ 
+ 
+  Calling DSPEV.
+ S2 Diagonalization CPU Time:         0.02 s.
+  After DSPEV, i =                         0
+
+ S2 EVals
+       1        0.000000
+       2        0.000000
+       3        0.000000
+       4        0.000000
+       5        0.000000
+       6        0.000000
+       7        0.000000
+       8        0.000000
+       9        0.000000
+      10        0.000000
+      11        0.000000
+      12        0.000000
+      13        0.000000
+      14        0.000000
+      15        0.000000
+      16        0.000000
+      17        0.000000
+      18        0.000000
+      19        0.000000
+      20        0.000000
+      21        0.000000
+      22        0.000000
+      23        0.000000
+      24        0.000000
+      25        0.000000
+      26        0.000000
+      27        0.000000
+      28        0.000000
+      29        0.000000
+      30        0.000000
+      31        0.000000
+      32        0.000000
+      33        0.000000
+      34        0.000000
+      35        0.000000
+      36        0.000000
+      37        0.000000
+      38        0.000000
+      39        0.000000
+      40        0.000000
+      41        0.000000
+      42        0.000000
+      43        0.000000
+      44        0.000000
+      45        0.000000
+      46        0.000000
+      47        0.000000
+      48        0.000000
+      49        0.000000
+      50        0.000000
+      51        0.000000
+      52        0.000000
+      53        0.000000
+      54        0.000000
+      55        0.000000
+      56        0.000000
+      57        0.000000
+      58        0.000000
+      59        0.000000
+      60        0.000000
+      61        0.000000
+      62        0.000000
+      63        0.000000
+      64        0.000000
+      65        0.000000
+      66        0.000000
+      67        0.000000
+      68        0.000000
+      69        0.000000
+      70        0.000000
+      71        0.000000
+      72        0.000000
+      73        0.000000
+      74        0.000000
+      75        0.000000
+      76        0.000000
+      77        0.000000
+      78        0.000000
+      79        0.000000
+      80        0.000000
+      81        0.000000
+      82        0.000000
+      83        0.000000
+      84        0.000000
+      85        0.000000
+      86        0.000000
+      87        0.000000
+      88        0.000000
+      89        0.000000
+      90        0.000000
+      91        0.000000
+      92        0.000000
+      93        0.000000
+      94        0.000000
+      95        0.000000
+      96        0.000000
+      97        0.000000
+      98        0.000000
+      99        0.000000
+     100        0.000000
+     101        0.000000
+     102        0.000000
+     103        0.000000
+     104        0.000000
+     105        0.000000
+     106        1.999940
+     107        1.999940
+     108        1.999943
+     109        1.999946
+     110        1.999949
+     111        1.999949
+     112        1.999953
+     113        1.999953
+     114        1.999959
+     115        1.999959
+     116        1.999959
+     117        1.999961
+     118        1.999966
+     119        1.999966
+     120        1.999982
+     121        1.999994
+     122        1.999994
+     123        1.999995
+     124        1.999995
+     125        1.999995
+     126        1.999995
+     127        1.999996
+     128        1.999997
+     129        1.999997
+     130        1.999997
+     131        1.999997
+     132        1.999998
+     133        1.999998
+     134        2.000000
+     135        2.000000
+     136        2.000000
+     137        2.000000
+     138        2.000000
+     139        2.000000
+     140        2.000000
+     141        2.000000
+     142        2.000000
+     143        2.000000
+     144        2.000000
+     145        2.000000
+     146        2.000000
+     147        2.000000
+     148        2.000000
+     149        2.000000
+     150        2.000000
+     151        2.000000
+     152        2.000000
+     153        2.000000
+     154        2.000000
+     155        2.000000
+     156        2.000000
+     157        2.000000
+     158        2.000000
+     159        2.000000
+     160        2.000000
+     161        2.000000
+     162        2.000000
+     163        2.000000
+     164        2.000000
+     165        2.000000
+     166        2.000000
+     167        2.000000
+     168        2.000000
+     169        2.000000
+     170        2.000000
+     171        2.000000
+     172        2.000000
+     173        2.000000
+     174        2.000000
+     175        2.000000
+     176        2.000000
+     177        2.000000
+     178        2.000000
+     179        2.000000
+     180        2.000000
+     181        2.000001
+     182        2.000001
+     183        2.000002
+     184        2.000002
+     185        2.000002
+     186        2.000003
+     187        2.000003
+     188        2.000004
+     189        2.000004
+     190        2.000004
+     191        2.000004
+     192        2.000005
+     193        2.000006
+     194        2.000006
+     195        2.000008
+     196        2.000018
+     197        2.000034
+     198        2.000034
+     199        2.000038
+     200        2.000040
+     201        2.000040
+     202        2.000040
+     203        2.000047
+     204        2.000047
+     205        2.000051
+     206        2.000051
+     207        2.000054
+     208        2.000057
+     209        2.000061
+     210        2.000061
+     211        5.999973
+     212        5.999994
+     213        5.999994
+     214        5.999998
+     215        6.000000
+     216        6.000000
+     217        6.000000
+     218        6.000000
+     219        6.000000
+     220        6.000001
+     221        6.000001
+     222        6.000002
+     223        6.000005
+     224        6.000005
+     225        6.000027
+ 
+  nDetTotal =                       225
+ Non-Zero Projection (   -0.1263) onto Reference by EVec          7. EVal =     0.0000
+ Non-Zero Projection (   -0.1431) onto Reference by EVec         13. EVal =     0.0000
+ Non-Zero Projection (   -0.1267) onto Reference by EVec         20. EVal =     0.0000
+ Non-Zero Projection (    0.1719) onto Reference by EVec         23. EVal =     0.0000
+ Non-Zero Projection (    0.1391) onto Reference by EVec         26. EVal =     0.0000
+ Non-Zero Projection (   -0.0827) onto Reference by EVec         30. EVal =     0.0000
+ Non-Zero Projection (    0.3677) onto Reference by EVec         34. EVal =     0.0000
+ Non-Zero Projection (    0.3203) onto Reference by EVec         35. EVal =     0.0000
+ Non-Zero Projection (    0.3593) onto Reference by EVec         70. EVal =     0.0000
+ Non-Zero Projection (    0.1138) onto Reference by EVec         78. EVal =     0.0000
+ Non-Zero Projection (   -0.2718) onto Reference by EVec         79. EVal =     0.0000
+ Non-Zero Projection (   -0.1305) onto Reference by EVec         84. EVal =     0.0000
+ Non-Zero Projection (   -0.1513) onto Reference by EVec         93. EVal =     0.0000
+ Non-Zero Projection (    0.1261) onto Reference by EVec         99. EVal =     0.0000
+ Non-Zero Projection (   -0.1122) onto Reference by EVec        109. EVal =     1.9999
+ Non-Zero Projection (    0.1623) onto Reference by EVec        117. EVal =     2.0000
+ Non-Zero Projection (   -0.1128) onto Reference by EVec        123. EVal =     2.0000
+ Non-Zero Projection (    0.2640) onto Reference by EVec        124. EVal =     2.0000
+ Non-Zero Projection (   -0.2177) onto Reference by EVec        127. EVal =     2.0000
+ Non-Zero Projection (    0.2137) onto Reference by EVec        134. EVal =     2.0000
+ Non-Zero Projection (    0.1711) onto Reference by EVec        180. EVal =     2.0000
+ Non-Zero Projection (    0.0879) onto Reference by EVec        185. EVal =     2.0000
+ Non-Zero Projection (    0.1684) onto Reference by EVec        192. EVal =     2.0000
+ Non-Zero Projection (   -0.2504) onto Reference by EVec        195. EVal =     2.0000
+ Non-Zero Projection (    0.1593) onto Reference by EVec        199. EVal =     2.0000
+ Non-Zero Projection (    0.1132) onto Reference by EVec        207. EVal =     2.0001
+
+ END OF TEST PROGRAM scfEnergyTerms.
+ TOTAL JOB CPU Time:         0.04 s.

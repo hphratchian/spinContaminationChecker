@@ -429,6 +429,9 @@ INCLUDE 'hphSpinFun_mod.f03'
       write(iOut,5000) 'S2 Diagonalization',t2A-t1A
       write(iOut,*)' After DSPEV, i = ',i
       call flush(iOut)
+      do i = 1,nDetTotal
+        if(ABS(tmpEVals(i)).lt.(float(1)/float(10000))) tmpEVals(i) = float(0)
+      endDo
       call mqc_print(iOut,tmpEVals,header='S2 EVals')
       if(iPrint.ge.2.or.DEBUG)  &
         call mqc_print(iOut,tmpEVecs,header='S2 EVecs')
