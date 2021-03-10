@@ -1,5 +1,5 @@
 INCLUDE 'hphSpinFun_mod.f03'
-      Program hphSpinFun
+      Program spinContaminationChecker
 !
 !     This program evaluates the full set of S^2 eigenvalues and eigenvectors in
 !     the basis of substituted (Sz conserving) determinants. The program reads a
@@ -448,4 +448,4 @@ INCLUDE 'hphSpinFun_mod.f03'
       write(iOut,8999)
       call cpu_time(t2)
       write(iOut,5000) 'TOTAL JOB',t2-t1
-      end program hphSpinFun
+      end program spinContaminationChecker

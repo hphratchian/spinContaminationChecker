@@ -1,0 +1,16 @@
+%chk=101
+#p test uhf pop=full stable=opt
+
+test
+
+0  1
+h
+h   1   1.0
+
+--link1--
+%chk=101
+#p test uhf geom=allcheck guess=read
+output=(mat,AO2ElectronIntegrals) int=noraff nosymm
+
+101.mat
+
