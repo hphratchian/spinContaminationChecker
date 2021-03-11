@@ -78,15 +78,6 @@ INCLUDE 'hphSpinFun_mod.f03'
 !     Read the command line arguments.
 !
       nCommands = command_argument_count()
-
-!hph+
-!      write(iOut,*)' Hrant - nCommands = ',nCommands
-!      do i = 1,nCommands
-!        call get_command_argument(i,tmpString)
-!        write(iOut,*)TRIM(tmpString)
-!      endDo
-!hph-
-
       if(nCommands.lt.1)  &
         call mqc_error('No command line arguments provided. At least one command line argument is required giving the input Gaussian matrix element file name.')
       call get_command_argument(1,tmpString)
@@ -148,35 +139,6 @@ INCLUDE 'hphSpinFun_mod.f03'
       endIf
       PMatrixTotal = PMatrixAlpha+PMatrixBeta
       VMatrixAO = HCoreMatrixAO-TMatrixAO
-
-!hph+
-!      tmpMQCvar = FMatrixAlpha-HCoreMatrixAO
-!      call tmpMQCvar%print(header='F-H')
-!      MQC_Gaussian_DEBUGHPH = .False.
-!      call GMatrixFile%getArray('REGULAR 2E INTEGRALS',mqcVarOut=ERIs)
-!      call ERIs%print(IOut,' ERIs=')
-!      tmpMQCvar = HCoreMatrixAO
-!      write(iOut,*)
-!      write(iOut,*)' Forming Coulomb matrix...'
-!      call formCoulomb(Int(GMatrixFile%getVal('nbasis')),PMatrixAlpha,  &
-!        ERIs,tmpMQCvar,initialize=.true.)
-!      call formCoulomb(Int(GMatrixFile%getVal('nbasis')),PMatrixBeta,  &
-!        ERIs,tmpMQCvar,initialize=.false.)
-!      JMatrix = tmpMQCvar
-!      write(iOut,*)
-!      write(iOut,*)' Forming Exchange matrix...'
-!      call formExchange(Int(GMatrixFile%getVal('nbasis')),PMatrixAlpha,  &
-!        ERIs,tmpMQCvar,initialize=.false.)
-!      KMatrixAlpha = tmpMQCvar
-!      call PMatrixAlpha%print(header='PAlpha')
-!      call JMatrix%print(header='J')
-!      call KMatrixAlpha%print(header='KAlpha')
-!      call tmpMQCvar%print(header='temp fock matrix without H',blankAtTop=.true.)
-!      tmpMQCvar = tmpMQCvar + HCoreMatrixAO
-!      call tmpMQCvar%print(header='temp fock matrix with H',blankAtTop=.true.)
-!      call FMatrixAlpha%print(header='fock matrix from Gaussian')
-!hph-
-
 !
 !     Calculate the number of electrons using <PS>.
 !
@@ -317,28 +279,6 @@ INCLUDE 'hphSpinFun_mod.f03'
         stringRightBeta(nDetTotal,nDetTotal,nBit_Ints),  &
         tmpVectorInt1(nBit_Ints),tmpVectorInt2(nBit_Ints),  &
         tmpVectorInt3(nBit_Ints),tmpVectorInt4(nBit_Ints))
-!      do iBeta = 1,NDetBeta
-!        tmpVectorInt1 = Determinants%Strings%Beta%vat([iBeta],  &
-!          [1,nBit_Ints])
-!        do iAlpha = 1,nDetAlpha
-!          tmpVectorInt2 = Determinants%Strings%Alpha%vat([iAlpha],  &
-!            [1,nBit_Ints])
-!          i = (iBeta-1)*nDetAlpha+iAlpha
-!          do jBeta = 1,NDetBeta
-!            tmpVectorInt3 = Determinants%Strings%Beta%vat([jBeta],  &
-!              [1,nBit_Ints])
-!            do jAlpha = 1,nDetAlpha
-!              j = (jBeta-1)*nDetAlpha+jAlpha
-!              stringLeftBeta(i,j,:) = tmpVectorInt1
-!              stringLeftAlpha(i,j,:) = tmpVectorInt2
-!              stringRightBeta(i,j,:) = tmpVectorInt3
-!              tmpVectorInt4 = Determinants%Strings%Alpha%vat([jAlpha],  &
-!                [1,nBit_Ints])
-!              stringRightAlpha(i,j,:) = tmpVectorInt4
-!            endDo
-!          endDo
-!        endDo
-!      endDo
       do iBeta = 1,NDetBeta
         tmpVectorInt1 = Determinants%Strings%Beta%vat([iBeta],  &
           [1,nBit_Ints])
@@ -364,28 +304,10 @@ INCLUDE 'hphSpinFun_mod.f03'
       call cpu_time(t2A)
       write(iOut,5000) 'S2 Matrix String Pre-Processing',t2A-t1A
       call flush(iOut)
-!hph      goto 999
 !
 !     Evaluate the S2 matrix elements.
 !
       call cpu_time(t1A)
-
-!      do iBeta = 1,NDetBeta
-!        do iAlpha = 1,nDetAlpha
-!          i = (iBeta-1)*nDetAlpha+iAlpha
-!          do jBeta = 1,NDetBeta
-!            do jAlpha = 1,nDetAlpha
-!              j = (jBeta-1)*nDetAlpha+jAlpha
-!              S2_Mat(i,j) = S2_Mat_Elem(IOut,2,nBasis,  &
-!                stringLeftAlpha(i,1,:),stringLeftBeta(i,1,:),  &
-!                stringRightAlpha(1,j,:),stringRightBeta(1,j,:),tmp2NBasisSq)
-!              if(ABS(S2_Mat(i,j)).lt.(float(1)/float(10000))) S2_Mat(i,j) = float(0)
-!              if(DEBUG) write(iOut,2010) S2_Mat(i,j)
-!            endDo
-!          endDo
-!        endDo
-!      endDo
-
 !$OMP PARALLEL DO DEFAULT(NONE),  &
 !$OMP SHARED(S2_Mat,stringLeftAlpha,stringLeftBeta,stringRightAlpha,stringRightBeta,  &
 !$OMP   tmp2NBasisSq,NDetAlpha,NDetBeta,nBasis,iOut,DEBUG),  &
@@ -451,7 +373,6 @@ INCLUDE 'hphSpinFun_mod.f03'
           write(iOut,2100) tmpEVecs(nDetTotal,i),i,tmpEvals(i)
         endIf
       endDo
-!
 !
   999 Continue
       write(iOut,8999)
