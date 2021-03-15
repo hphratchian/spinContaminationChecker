@@ -75,6 +75,27 @@ Total SCF Energy = -0.99344
  Non-Zero Projection (   -0.1972) onto Reference by EVec         14. EVal =     2.0000
  Non-Zero Projection (    0.1189) onto Reference by EVec         15. EVal =     2.0000
  Non-Zero Projection (   -0.2297) onto Reference by EVec         16. EVal =     2.0000
+Sz= 0.00000
+Multiplicity= 1
+
+ Number of Multiplicities:     2
+   Lowest  Multiplicity in S**2:     1
+   Highest Multiplicity in S**2:     3
+
+ Multiplicity List (Initial)
+                  1             2
+       1             1             3
+       2             0             0
+
+ Multiplicity List (Final)
+                  1             2
+       1             1             3
+       2            10             6
+
+ Sum of Squares of Amplitudes Over Spin Subspaces
+       1        0.509789
+       2        0.490211
+  Hrant - SUM =    0.9999999999999999     
 
  END OF TEST PROGRAM scfEnergyTerms.
  TOTAL JOB CPU Time:         0.00 s.
