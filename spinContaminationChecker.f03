@@ -40,7 +40,7 @@ INCLUDE 'hphSpinFun_mod.f03'
       type(MQC_Variable)::tmpMQCvar
       type(MQC_Scalar)::tmpMQCvar1,tmpMQCvar2,tmpMQCvar3
       type(MQC_Variable)::nEalpha,nEbeta,nEtot,KEnergy,VEnergy,OneElEnergy,  &
-        TwoElEnergy,scfEnergy
+        TwoElEnergy,scfEnergy,SSqTmp,SzTotal,MultiplicityTemp
       type(MQC_Variable)::SMatrixAO,SMatrixMOAB,TMatrixAO,VMatrixAO,  &
         HCoreMatrixAO,FMatrixAlpha,FMatrixBeta,PMatrixAlpha,  &
         PMatrixBeta,PMatrixTotal,ERIs,JMatrix,KMatrixAlpha,  &
@@ -373,6 +373,16 @@ INCLUDE 'hphSpinFun_mod.f03'
           write(iOut,2100) tmpEVecs(nDetTotal,i),i,tmpEvals(i)
         endIf
       endDo
+!
+!     Try to figure out the range of Sz values found in the S^2 eigenvalue
+!     range.
+!
+      SzTotal = MQC(0.5)*(nEAlpha-nEBeta)
+      MultiplicityTemp = nEAlpha-nEBeta+MQC(1)
+      call SzTotal%print(header='Sz=')
+      call MultiplicityTemp%print(header='Multiplicity=')
+      call sumOverSpinStates(iOut,INT(MultiplicityTemp),tmpEVals,  &
+        tmpEVecs(nDetTotal,:))
 !
   999 Continue
       write(iOut,8999)

@@ -2,7 +2,7 @@
 !
 !     This module supports the program scfEnergyTerms.
 !
-!     -H. P. Hratchian, 2020.
+!     -H. P. Hratchian, 2020, 2021.
 !
 !
 !     USE Connections
@@ -81,13 +81,8 @@
 !
       iOff = 1
       nCommands = command_argument_count()
-
-      
       call get_command_argument(4+iOff,tmpString)
       Open(Unit=iOut,File=TRIM(tmpString),Status='unknown',IOStat=IError)
-
-      
-      
       call get_command_argument(6+iOff,matrixFilename)
       iPrint = 0
       nOMP = 1
@@ -105,6 +100,67 @@
 !
       return
       end subroutine commandLineArgs_gaussian
+!
+!PROCEDURE sumOverSpinStates
+      subroutine sumOverSpinStates(iOut,lowestMultiplicity,SSqList,  &
+        populationOverDets)
+!
+!     This subroutine takes the lowest expected multiplicity for a system and
+!     the list of S^2 eigenvalues, and determines how many states of each spin
+!     multiplicity are present in the list.
+!
+!
+      implicit none
+      integer(kind=int64),intent(in)::iOut,lowestMultiplicity
+      real(kind=real64),dimension(:),intent(in)::SSqList,populationOverDets
+      integer(kind=int64)::i,j,nStates,nMultips,multiplicityLow,  &
+        multiplicityHigh,multiplicityCurrent
+      integer(kind=real64),dimension(:,:),allocatable::multiplicityList
+      real(kind=real64)::realTmp
+      real(kind=real64),dimension(:),allocatable::populationsOverMultiplicities
+!
+ 1000 format(/,1x,'Number of Multiplicities: ',I5,/,  &
+        3x,'Lowest  Multiplicity in S**2: ',i5,/,  &
+        3x,'Highest Multiplicity in S**2: ',i5)
+ 1100 format(1x,i3,3x,f10.6,3x,f10.6,3x,i3)
+!
+      nStates = SIZE(SSqList)
+!
+!     Figure out the lowest and highest multiplicities in SSqList. SSqList is
+!     assumed to be ordered from lowest to highest value.
+!
+      multiplicityLow  = INT(SQRT(1.0+4.0*SSqList(1))+0.5)
+      multiplicityHigh = INT(SQRT(1.0+4.0*SSqList(nStates))+0.5)
+      nMultips = 1 + (multiplicityHigh - multiplicityLow)/2
+      write(iOut,1000) nMultips,multiplicityLow,multiplicityHigh
+      Allocate(multiplicityList(2,nMultips),  &
+        populationsOverMultiplicities(nMultips))
+      multiplicityCurrent = multiplicityLow
+      do i = 1,nMultips
+        multiplicityList(1,i) = multiplicityCurrent
+        multiplicityList(2,i) = 0
+        multiplicityCurrent = multiplicityCurrent+2
+      endDo
+      call mqc_print(iOut,multiplicityList,header='Multiplicity List (Initial)')
+!
+!
+!     Loop over SSqList elements and evaluate 1+4*S^2 to see if they're integer
+!     values.
+      populationsOverMultiplicities = 0.0
+      do i = 1,SIZE(SSqList)
+        multiplicityCurrent = INT(SQRT(1.0+4.0*SSqList(i))+0.5)
+        j = (multiplicityCurrent-multiplicityLow)/2 + 1
+        multiplicityList(2,j) = multiplicityList(2,j) + 1
+        populationsOverMultiplicities(j) = populationsOverMultiplicities(j)   &
+          + populationOverDets(i)**2
+!hph        write(iOut,1100) i,SSqList(i),4.0*SSqList(i),multiplicityCurrent
+      endDo
+      call mqc_print(iOut,multiplicityList,header='Multiplicity List (Final)')
+      call mqc_print(iOut,populationsOverMultiplicities,header='Sum of Squares of Amplitudes Over Spin Subspaces')
+      write(iOut,*)' Hrant - SUM = ',SUM(populationsOverMultiplicities)
+!
+      return
+      end subroutine sumOverSpinStates
 !
 !
       subroutine formFock(nBasis,density,ERIs,coulomb)
