@@ -21,11 +21,13 @@ INCLUDE 'hphSpinFun_mod.f03'
 !     Variable Declarations
 !
       implicit none
-      integer(kind=int64)::nCommands,iPrint,nOMP,i,j,k,k1,k2,nAtoms,nAt3,  &
-        nBasis,nDetAlpha,nDetBeta,nDetTotal,NDetTT,nBit_Ints,iAlpha,  &
-        iBeta,jAlpha,jBeta
+      integer(kind=int64)::nCommands,nSwitches,iPrint,nOMP,i,j,k,k1,k2,  &
+        nAtoms,nAt3,nBasis,nDetAlpha,nDetBeta,nDetTotal,NDetTT,  &
+        nBit_Ints,iAlpha,iBeta,jAlpha,jBeta,nFrozenCore,nFrozenVirtual
       integer(kind=int64),dimension(:),allocatable::atomicNumbers,  &
         tmpVectorInt1,tmpVectorInt2,tmpVectorInt3,tmpVectorInt4
+      integer(kind=int64),dimension(:,:),allocatable::permuteAlpha,  &
+        permuteBeta
       integer(kind=int64),dimension(:,:,:),allocatable::stringLeftAlpha,  &
         stringLeftBeta,stringRightAlpha,stringRightBeta
       real(kind=real64)::t1,t2,t1A,t2A,Vnn,Escf
@@ -35,10 +37,12 @@ INCLUDE 'hphSpinFun_mod.f03'
       real(kind=real64),dimension(:,:),allocatable::distanceMatrix,  &
         S2_Mat,tmp2NBasisSq,tmpEVecs,tmpMatrix
       character(len=512)::matrixFilename,tmpString
-      logical::DEBUG=.false.,gaussianCall
+      logical::DEBUG=.false.,gaussianCall,correspondingOrbitals,  &
+        ABOverlapTest
       type(mqc_gaussian_unformatted_matrix_file)::GMatrixFile
       type(MQC_Variable)::tmpMQCvar
-      type(MQC_Scalar)::tmpMQCvar1,tmpMQCvar2,tmpMQCvar3
+      type(MQC_Scalar)::tmpMQCvar1,tmpMQCvar2,tmpMQCvar3,tmpMQCvar4,  &
+        tmpMQCvar5
       type(MQC_Variable)::nEalpha,nEbeta,nEtot,KEnergy,VEnergy,OneElEnergy,  &
         TwoElEnergy,scfEnergy,SSqTmp,SzTotal,MultiplicityTemp
       type(MQC_Variable)::SMatrixAO,SMatrixMOAB,TMatrixAO,VMatrixAO,  &
@@ -80,23 +84,48 @@ INCLUDE 'hphSpinFun_mod.f03'
       nCommands = command_argument_count()
       if(nCommands.lt.1)  &
         call mqc_error('No command line arguments provided. At least one command line argument is required giving the input Gaussian matrix element file name.')
-      call get_command_argument(1,tmpString)
-      if(TRIM(tmpString).eq.'-g') then
-        gaussianCall = .true.
-      else
-        gaussianCall = .false.
-      endIf
+
+!hph+
+      write(*,*)
+      write(*,*)
+      call commandLineArgs_switches(nSwitches,gaussianCall,  &
+        correspondingOrbitals,ABOverlapTest,nFrozenCore,nFrozenVirtual,  &
+        permuteAlpha,permuteBeta)
+      write(*,*)' Hrant - nSwitches = ',nSwitches
+      write(*,*)'         gaussianCall          = ',gaussianCall
+      write(*,*)'         correspondingOrbitals = ',correspondingOrbitals
+      write(*,*)'         nFrozenCore           = ',nFrozenCore
+      write(*,*)'         nFrozenVirtual        = ',nFrozenVirtual
+      call mqc_print(iOut,permuteAlpha,header='Alpha Permutations')
+      call mqc_print(iOut,permuteBeta,header='Beta Permutations')
+!hph-
+
+!hph+
+!      call get_command_argument(1,tmpString)
+!      if(TRIM(tmpString).eq.'-g') then
+!        gaussianCall = .true.
+!      else
+!        gaussianCall = .false.
+!      endIf
+!hph-
+
       if(gaussianCall) then
         call commandLineArgs_gaussian(iOut,matrixFilename,iPrint,nOMP)
       else
         call commandLineArgs_direct(nSwitches,matrixFilename,iPrint,nOMP)
       endIf
+      write(iOut,*)' matrixFilename: ',TRIM(matrixFilename)
       write(iOut,1020) iPrint
       if(iPrint.eq.-1) then
         iPrint = 10
         DEBUG = .true.
       endIf
       write(iOut,1030) nOMP
+
+!hph+
+!      goto 999
+!hph-
+
       call omp_set_num_threads(nOMP)
 !
 !     Open the Gaussian matrix file and load the number of atomic centers.
@@ -139,6 +168,37 @@ INCLUDE 'hphSpinFun_mod.f03'
       endIf
       PMatrixTotal = PMatrixAlpha+PMatrixBeta
       VMatrixAO = HCoreMatrixAO-TMatrixAO
+!
+!     Make permutations for the alpha and beta MO coefficients.
+!
+
+      write(*,*)
+      write(*,*)
+      call CAlpha%print(iOut,header='CAlpha BEFORE Permutations')
+      call CBeta%print(iOut,header='CBeta  BEFORE Permutations')
+      if(Allocated(permuteAlpha)) then
+        do i = 1,SIZE(permuteAlpha,2)
+          call MQC_Variable_MatrixPermuteColumns(CAlpha,  &
+            permuteAlpha(1,i),permuteAlpha(2,i))
+        endDo
+      endIf
+      if(Allocated(permuteBeta)) then
+        do i = 1,SIZE(permuteBeta,2)
+          call MQC_Variable_MatrixPermuteColumns(CBeta,  &
+            permuteBeta(1,i),permuteBeta(2,i))
+        endDo
+      endIf
+      write(*,*)
+      write(*,*)
+      call CAlpha%print(iOut,header='CAlpha AFTER  Permutations')
+      call CBeta%print(iOut,header='CBeta  AFTER  Permutations')
+      write(*,*)
+      write(*,*)
+
+
+!hph      goto 999
+
+
 !
 !     Calculate the number of electrons using <PS>.
 !
@@ -226,8 +286,9 @@ INCLUDE 'hphSpinFun_mod.f03'
       SMatrixMOAB = MatMul(TRANSPOSE(CBeta),MatMul(SMatrixAO,CBeta))
       if(DEBUG) call SMatrixMOAB%print(header='CBeta.S.CBeta')
       SMatrixMOAB = MatMul(TRANSPOSE(CAlpha),MatMul(SMatrixAO,CBeta))
-      if(iPrint.ge.1.or.DEBUG)  &
+      if(iPrint.ge.0.or.DEBUG)  &
         call SMatrixMOAB%print(header='Alpha-Beta MO Overlap Matrix')
+      if(ABOverlapTest) goto 999
 !
 !     Try building things up for post-SCF like jobs.
 !
@@ -238,13 +299,20 @@ INCLUDE 'hphSpinFun_mod.f03'
       tmpMQCvar1 = GMatrixFile%getVal('nbasis')
       tmpMQCvar2 = INT(nEalpha)
       tmpMQCvar3 = INT(nEbeta)
+      tmpMQCvar4 = nFrozenCore
+      tmpMQCvar5 = nFrozenVirtual
+      tmpMQCvar1 = tmpMQCvar1 - tmpMQCvar4 - tmpMQCvar5
+      tmpMQCvar2 = tmpMQCvar2 - tmpMQCvar4
+      tmpMQCvar3 = tmpMQCvar3 - tmpMQCvar4
       call cpu_time(t1A)
-      Call Gen_Det_Str(IOut,0_int64,tmpMQCvar1,tmpMQCvar2,tmpMQCvar3,  &
-        Determinants)
+      Call Gen_Det_Str(IOut,2,tmpMQCvar1,tmpMQCvar2,  &
+        tmpMQCvar3,Determinants,tmpMQCvar4)
       call cpu_time(t2A)
       write(iOut,5000) 'Gen_Det_Str',t2A-t1A
-      nDetAlpha = Bin_Coeff(GMatrixFile%getVal('nbasis'),INT(nEalpha))
-      nDetBeta  = Bin_Coeff(GMatrixFile%getVal('nbasis'),INT(nEbeta))
+      nDetAlpha = Bin_Coeff(GMatrixFile%getVal('nbasis')-nFrozenCore-nFrozenVirtual,  &
+        INT(nEalpha)-nFrozenCore)
+      nDetBeta  = Bin_Coeff(GMatrixFile%getVal('nbasis')-nFrozenCore-nFrozenVirtual,  &
+        INT(nEbeta)-nFrozenCore)
       nDetTotal = nDetAlpha*nDetBeta
       write(iOut,*)
       write(iOut,*)' nBasis    = ',INT(GMatrixFile%getVal('nbasis'))
@@ -254,10 +322,15 @@ INCLUDE 'hphSpinFun_mod.f03'
       write(iOut,*)' nDetBeta  = ',nDetBeta
       write(iOut,*)' nDetTotal = ',nDetTotal
       write(iOut,*)
-      nBit_Ints = (INT(GMatrixFile%getVal('nbasis'))/(Bit_Size(0)-1))+1 
+      nBit_Ints = ((INT(GMatrixFile%getVal('nbasis'))-nFrozenVirtual)/(Bit_Size(0)-1))+1 
       write(iOut,*)' nBit_Ints = ',nBit_Ints
       write(iOut,*)
       call flush(iOut)
+
+!hph+
+!      goto 999
+!hph-
+
       Allocate(S2_Mat(nDetTotal,nDetTotal))
       tmp2NBasisSq(1:NBasis,1:NBasis) = float(0)
       tmp2NBasisSq(NBasis+1:2*NBasis,NBasis+1:2*NBasis) = float(0)
@@ -267,8 +340,9 @@ INCLUDE 'hphSpinFun_mod.f03'
       do i = 1,2*nBasis
         tmp2NBasisSq(i,i) = float(1)
       endDo
-      if(iPrint.ge.2.or.DEBUG)  &
+      if(iPrint.ge.0.or.DEBUG)  &
         call mqc_print(iOut,tmp2NBasisSq,header='Full MO-MO Overlap')
+      call flush(iOut)
 !
 !     Pre-process the string list combinations for the S2 matrix element
 !     formation loops below.
@@ -280,6 +354,7 @@ INCLUDE 'hphSpinFun_mod.f03'
         stringRightBeta(nDetTotal,nDetTotal,nBit_Ints),  &
         tmpVectorInt1(nBit_Ints),tmpVectorInt2(nBit_Ints),  &
         tmpVectorInt3(nBit_Ints),tmpVectorInt4(nBit_Ints))
+      call flush(iOut)
       do iBeta = 1,NDetBeta
         tmpVectorInt1 = Determinants%Strings%Beta%vat([iBeta],  &
           [1,nBit_Ints])
@@ -291,6 +366,7 @@ INCLUDE 'hphSpinFun_mod.f03'
           stringLeftAlpha(i,1,:) = tmpVectorInt2
         endDo
       endDo
+      call flush(iOut)
       do jBeta = 1,NDetBeta
         tmpVectorInt3 = Determinants%Strings%Beta%vat([jBeta],  &
           [1,nBit_Ints])
@@ -318,7 +394,7 @@ INCLUDE 'hphSpinFun_mod.f03'
         do j = 1,i
           S2_Mat(i,j) = S2_Mat_Elem(IOut,2,nBasis,  &
             stringLeftAlpha(i,1,:),stringLeftBeta(i,1,:),  &
-            stringRightAlpha(1,j,:),stringRightBeta(1,j,:),tmp2NBasisSq)
+            stringRightAlpha(1,j,:),stringRightBeta(1,j,:),tmp2NBasisSq,1_int64)
           if(ABS(S2_Mat(i,j)).lt.(float(1)/float(10000))) S2_Mat(i,j) = float(0)
           S2_Mat(j,i) = S2_Mat(i,j)
 !          if(DEBUG) write(iOut,2010) S2_Mat(i,j)
@@ -350,7 +426,7 @@ INCLUDE 'hphSpinFun_mod.f03'
       write(iOut,*)' nDetTT = ',nDetTT
       write(iOut,*)
       write(iOut,*)
-      goto 999
+!hph      goto 999
       write(iOut,*)' Calling DSPEV.'
       call cpu_time(t1A)
       Call DSPEV('V','L',nDetTotal,S2_MatSymm,tmpEVals,tmpEVecs,  &

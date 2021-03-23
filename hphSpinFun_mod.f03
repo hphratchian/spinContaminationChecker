@@ -25,14 +25,115 @@
       CONTAINS
 !
 !
-      subroutine commandLineArgs_direct(matrixFilename,iPrint,nOMP)
+      subroutine commandLineArgs_switches(nSwitches,gaussianCall,  &
+        correspondingOrbitals,ABOverlapTest,nFrozenCore,nFrozenVirtual,  &
+        permuteAlpha,permuteBeta)
+!
+!     This routine reads the command line arguments for switches, which are all
+!     required BEFORE the standard command line arguments. This routine returns
+!     the number of command line arguments that are switches (or related to
+!     switches), which can be used by the calling program to offset the
+!     positions of non-switch command line arguments.
+!
+!
+      implicit none
+      integer(kind=int64),intent(out)::nSwitches,nFrozenCore,  &
+        nFrozenVirtual
+      integer(kind=int64),dimension(:,:),allocatable,intent(out)::permuteAlpha,  &
+        permuteBeta
+      logical,intent(out)::gaussianCall,correspondingOrbitals,ABOverlapTest
+      integer(kind=int64)::i,nCommands,iPermute,nPermute
+      character(len=512)::tmpString
+      logical::foundSwitch
+!
+!     Default the output arguments.
+!
+      gaussianCall = .False.
+      correspondingOrbitals = .False.
+      ABOverlapTest = .False.
+      nFrozenCore = 0
+      nFrozenVirtual = 0
+!
+!     Do the work...
+!
+      nCommands = command_argument_count()
+      i = 1
+      foundSwitch = .True.
+      do while(i.lt.nCommands)
+        call get_command_argument(i,tmpString)
+        if(tmpString(1:1).ne.'-') foundSwitch = .False.
+        if(.not.foundSwitch) exit
+        write(*,*)' Hrant - Found Switch: ',TRIM(tmpString)
+        select case(TRIM(tmpString))
+        case('-g')
+          gaussianCall = .true.
+          i = i+1
+        case('-c')
+          correspondingOrbitals = .True.
+          i = i+1
+        case('-overlap')
+          ABOverlapTest = .True.
+          i = i+1
+        case('-fc')
+          call mqc_get_command_argument_integer(i+1,nFrozenCore)
+          i = i+2
+        case('-fv')
+          call mqc_get_command_argument_integer(i+1,nFrozenVirtual)
+          i = i+2
+        case('-p')
+          call mqc_get_command_argument_integer(i+1,nPermute)
+          i = i+2
+          Allocate(permuteAlpha(2,nPermute),permuteBeta(2,nPermute))
+          do iPermute=1,nPermute
+            call mqc_get_command_argument_integer(i,permuteAlpha(1,iPermute))
+            call mqc_get_command_argument_integer(i+1,permuteAlpha(2,iPermute))
+            call mqc_get_command_argument_integer(i,permuteBeta(1,iPermute))
+            call mqc_get_command_argument_integer(i+1,permuteBeta(2,iPermute))
+            i = i+2
+          endDo
+        case('-pa')
+          call mqc_get_command_argument_integer(i+1,nPermute)
+          i = i+2
+          Allocate(permuteAlpha(2,nPermute))
+          do iPermute=1,nPermute
+            call mqc_get_command_argument_integer(i,permuteAlpha(1,iPermute))
+            call mqc_get_command_argument_integer(i+1,permuteAlpha(2,iPermute))
+            i = i+2
+          endDo
+        case('-pb')
+          call mqc_get_command_argument_integer(i+1,nPermute)
+          i = i+2
+          Allocate(permuteBeta(2,nPermute))
+          do iPermute=1,nPermute
+            call mqc_get_command_argument_integer(i,permuteBeta(1,iPermute))
+            call mqc_get_command_argument_integer(i+1,permuteBeta(2,iPermute))
+            i = i+2
+          endDo
+        case default
+          call mqc_error('Unknown Command Line Switch Found.')
+!hph          i = i+1
+        end select
+      end do
+      nSwitches = i-1
+!
+      return
+      end subroutine commandLineArgs_switches
+!
+!
+      subroutine commandLineArgs_direct(nSwitches,matrixFilename,iPrint,  &
+        nOMP)
 !
 !     This routine reads the command line and returns the name of the matrix
 !     element file, the print level flag, and the requested number of openMP
 !     processes. This routine is meant for use in direct runs by a user.
 !
+!     The input dummy argument nSwitches is used to offset the command line
+!     arguments where the matrix filename, print flag, and number of OpenMP
+!     threads are expected.
+!
 !
       implicit none
+      integer(kind=int64),intent(in)::nSwitches
       character(len=512),intent(out)::matrixFilename
       integer(kind=int64),intent(out)::iPrint,nOMP
       integer(kind=int64)::nCommands
@@ -40,16 +141,16 @@
 !
 !     Do the work...
 !
-      nCommands = command_argument_count()
-      call get_command_argument(1,matrixFilename)
+      nCommands = command_argument_count()-nSwitches
+      call get_command_argument(1+nSwitches,matrixFilename)
       iPrint = 0
       nOMP = 1
       if(nCommands.ge.2) then
-        call get_command_argument(2,tmpString)
+        call get_command_argument(2+nSwitches,tmpString)
         read(tmpString,*) iPrint
       endIf
       if(nCommands.ge.3) then
-        call get_command_argument(3,tmpString)
+        call get_command_argument(3+nSwitches,tmpString)
         read(tmpString,*) nOMP
         if(nOMP.le.0) call mqc_error('OMP number must be >= 1.')
       endIf
@@ -299,7 +400,7 @@
 !     PROCEDURE S2_MAT_ELEM    
 ! 
       Function S2_Mat_Elem(IOut,IPrint,NBasis,Alpha_String_1,Beta_String_1, &
-      Alpha_String_2,Beta_String_2,MO_Overlap)
+      Alpha_String_2,Beta_String_2,MO_Overlap,nBit_IntsIn)
 !
 !     This function returns the CI S**2 matrix elements used for computing S**2
 !     values of CI vectors for a given alpha and beta string combination.
@@ -308,6 +409,7 @@
 !     Variable Declarations...
 !
       Implicit None
+      Integer(kind=int64),optional,intent(in)::NBit_IntsIn
       Integer(kind=int64)::IOut,IPrint,NBasis,IPos,JPos,IDiff,Det_Diff,NAlpha,NBeta, &
         IOcc,JOcc,KOcc,LOcc,Mat_Sign,Alpha_Diff_Cnt,Beta_Diff_Cnt,NBit_Ints, &
         I,J,II,JJ
@@ -335,7 +437,11 @@
 !      Write(IOut,*) 'NDifb=', PopCnt(IEOR(Beta_String_1,Beta_String_2))
 !      Write(IOut,*)
 !
-      NBit_Ints = (NBasis/Bit_Size(0))+1 
+      if(PRESENT(NBit_IntsIn)) then
+        NBit_Ints = NBit_IntsIn
+      else
+        NBit_Ints = (NBasis/Bit_Size(0))+1 
+      endIf
       Allocate(Alpha_Diff(NBit_Ints),Beta_Diff(NBit_Ints))
       Det_Diff = 0
       Alpha_Diff_Cnt = 0
