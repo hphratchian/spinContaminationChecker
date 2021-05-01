@@ -803,8 +803,6 @@
       End Function S2_Mat_Elem  
 
       
-      
-      
 !
 !
       end module hphSpinFun_mod

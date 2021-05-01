@@ -1,0 +1,59 @@
+%chk=benzene_uhf_sto3G
+#p test uhf/sto-3g geom=connectivity opt(calcfc) freq
+
+OptFreq job on benzene using the UHF/STO-3G model chemistry.
+
+0 1
+ C                 -0.24390242   -2.27272724    0.00000000
+ C                  1.15125758   -2.27272724    0.00000000
+ C                  1.84879558   -1.06497624    0.00000000
+ C                  1.15114158    0.14353276   -0.00119900
+ C                 -0.24368342    0.14345476   -0.00167800
+ C                 -0.94128442   -1.06475124   -0.00068200
+ H                 -0.79366142   -3.22504424    0.00045000
+ H                  1.70076558   -3.22524024    0.00131500
+ H                  2.94847558   -1.06489624    0.00063400
+ H                  1.70134158    1.09567576   -0.00125800
+ H                 -0.79380542    1.09573576   -0.00263100
+ H                 -2.04088842   -1.06456824   -0.00086200
+
+ 1 2 1.5 6 1.5 7 1.0
+ 2 3 1.5 8 1.0
+ 3 4 1.5 9 1.0
+ 4 5 1.5 10 1.0
+ 5 6 1.5 11 1.0
+ 6 12 1.0
+ 7
+ 8
+ 9
+ 10
+ 11
+ 12
+
+
+--link1--
+%chk=benzene_uhf_sto3G
+#p test uhf/sto-3G geom=allcheck guess=read stable=opt
+
+
+--link1--
+%chk=benzene_uhf_sto3G
+#p test uhf/sto-3G geom=allcheck guess=read opt(calcfc) freq
+
+
+--link1--
+%chk=benzene_uhf_sto3G
+#p test uhf/sto-3G geom=allcheck guess=read
+output=(mat,AO2ElectronIntegrals) int=noraff nosymm
+
+benzene_uhf_sto3G.mat
+
+
+--link1--
+%chk=benzene_uhf_sto3G
+#p test uhf/sto-3G geom=allcheck guess=(read,biorthog,only,save) pop=orbitals
+output=(mat,AO2ElectronIntegrals) int=noraff nosymm
+
+benzene_uhf_sto3G_co.mat
+
+
