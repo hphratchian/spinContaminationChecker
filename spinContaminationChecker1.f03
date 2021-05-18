@@ -144,7 +144,7 @@ INCLUDE 'hphSpinFun_mod.f03'
 !     x nBasis matrix.
 !
       nBasis = Int(GMatrixFile%getVal('nbasis'))
-      if(nBasis.gt.60) call mqc_error('NBasis > 60 NYI.')
+!hph      if(nBasis.gt.60) call mqc_error('NBasis > 60 NYI.')
       Allocate(tmp2NBasisSq(2*nBasis,2*nBasis))
 !
 !     Load up a few matrices from the matrix file.
