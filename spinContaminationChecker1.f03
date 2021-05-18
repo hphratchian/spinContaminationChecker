@@ -393,9 +393,12 @@ INCLUDE 'hphSpinFun_mod.f03'
       do i = 1,NDetAlpha*NDetBeta
 !        do j = 1,NDetAlpha*NDetBeta
         do j = 1,i
+!          S2_Mat(i,j) = S2_Mat_Elem(IOut,2,nBasis,  &
+!            stringLeftAlpha(i,1,:),stringLeftBeta(i,1,:),  &
+!            stringRightAlpha(1,j,:),stringRightBeta(1,j,:),tmp2NBasisSq,1_int64)
           S2_Mat(i,j) = S2_Mat_Elem(IOut,2,nBasis,  &
             stringLeftAlpha(i,1,:),stringLeftBeta(i,1,:),  &
-            stringRightAlpha(1,j,:),stringRightBeta(1,j,:),tmp2NBasisSq,1_int64)
+            stringRightAlpha(1,j,:),stringRightBeta(1,j,:),tmp2NBasisSq)
           if(ABS(S2_Mat(i,j)).lt.(float(1)/float(10000))) S2_Mat(i,j) = float(0)
           S2_Mat(j,i) = S2_Mat(i,j)
 !          if(DEBUG) write(iOut,2010) S2_Mat(i,j)
