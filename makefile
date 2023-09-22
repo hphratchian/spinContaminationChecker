@@ -1,13 +1,12 @@
 #
 # This is a simple makefile for building spin-squared calculation code.
 #
-MQCDir       = $(mqcinstall)
+MQCDir       = /home/cdwyer/mqc_install
 MQCMODS      = $(MQCDir)/PGI/mod
 MQCLIB       = $(MQCDir)/PGI/lib
 LIBS         = -llapack -lblas -L$(MQCLIB)
 F03Flags     = 
-RunF         = pgfortran -i8 -r8 -mp -Mallocatable=03
-#RunF         = pgfortran -i8 -r8 -mp
+RunF         = nvfortran -i8 -r8 -mp -Mallocatable=03
 #
 #
 # The 'all' rule.
