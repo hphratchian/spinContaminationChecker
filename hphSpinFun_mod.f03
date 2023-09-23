@@ -243,9 +243,11 @@
         multiplicityList(2,i) = 0
         multiplicityCurrent = multiplicityCurrent+2
       endDo
+!CJD+
       mqcMat_mL = multiplicityList
       call mqcMat_mL%print(header='CJD - Multiplicity List (Initial)')
-!CJD  call mqc_print(iOut,mqcMat_mL,header='Multiplicity List (Initial)')
+!     call mqc_print(iOut,mqcMat_mL,header='Multiplicity List (Initial)')
+!CJD-
 !
 !
 !     Loop over SSqList elements and evaluate 1+4*S^2 to see if they're integer
@@ -259,12 +261,14 @@
           + populationOverDets(i)**2
 !hph        write(iOut,1100) i,SSqList(i),4.0*SSqList(i),multiplicityCurrent
       endDo
+!CJD+
       mqcMat_mL = multiplicityList
       call mqcMat_mL%print(header='CJD - Multiplicity List (Final)')
-!CJD  call mqc_print(iOut,mqcMat_mL,header='Multiplicity List (Final)')
+!     call mqc_print(iOut,mqcMat_mL,header='Multiplicity List (Final)')
       mqcMat_pOM = populationsOverMultiplicities
       call mqcMat_pOM%print(header='CJD - Sum of Squares of Amplitudes Over Spin Subspaces')
-!CJD  call mqc_print(iOut,mqcMat_pOM,header='Sum of Squares of Amplitudes Over Spin Subspaces')
+!     call mqc_print(iOut,mqcMat_pOM,header='Sum of Squares of Amplitudes Over Spin Subspaces')
+!CJD-
       write(iOut,*)' Hrant - SUM = ',SUM(populationsOverMultiplicities)
 !
       return

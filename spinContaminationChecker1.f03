@@ -28,8 +28,6 @@ INCLUDE 'hphSpinFun_mod.f03'
         tmpVectorInt1,tmpVectorInt2,tmpVectorInt3,tmpVectorInt4
       integer(kind=int64),dimension(:,:),allocatable::permuteAlpha,  &
         permuteBeta
-!     CJD adding temporary matrix to file
-      integer(kind=int64),dimension(:,:),allocatable::mat_pA
       integer(kind=int64),dimension(:,:,:),allocatable::stringLeftAlpha,  &
         stringLeftBeta,stringRightAlpha,stringRightBeta
       real(kind=real64)::t1,t2,t1A,t2A,Vnn,Escf

@@ -1,7 +1,7 @@
 #
 # This is a simple makefile for building spin-squared calculation code.
 #
-MQCDir       = /home/cdwyer/mqc_install
+MQCDir       = $(mqcinstall)
 MQCMODS      = $(MQCDir)/PGI/mod
 MQCLIB       = $(MQCDir)/PGI/lib
 LIBS         = -llapack -lblas -L$(MQCLIB)
