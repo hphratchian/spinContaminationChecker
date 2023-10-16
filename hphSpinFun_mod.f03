@@ -219,6 +219,7 @@
       integer(kind=real64),dimension(:,:),allocatable::multiplicityList
       real(kind=real64)::realTmp
       real(kind=real64),dimension(:),allocatable::populationsOverMultiplicities
+      type(MQC_Variable)::mqcMat_mL,mqcMat_pOM
 !
  1000 format(/,1x,'Number of Multiplicities: ',I5,/,  &
         3x,'Lowest  Multiplicity in S**2: ',i5,/,  &
@@ -242,7 +243,11 @@
         multiplicityList(2,i) = 0
         multiplicityCurrent = multiplicityCurrent+2
       endDo
-      call mqc_print(iOut,multiplicityList,header='Multiplicity List (Initial)')
+!CJD+
+      mqcMat_mL = multiplicityList
+      call mqcMat_mL%print(header='CJD - Multiplicity List (Initial)')
+!     call mqc_print(iOut,mqcMat_mL,header='Multiplicity List (Initial)')
+!CJD-
 !
 !
 !     Loop over SSqList elements and evaluate 1+4*S^2 to see if they're integer
@@ -256,8 +261,14 @@
           + populationOverDets(i)**2
 !hph        write(iOut,1100) i,SSqList(i),4.0*SSqList(i),multiplicityCurrent
       endDo
-      call mqc_print(iOut,multiplicityList,header='Multiplicity List (Final)')
-      call mqc_print(iOut,populationsOverMultiplicities,header='Sum of Squares of Amplitudes Over Spin Subspaces')
+!CJD+
+      mqcMat_mL = multiplicityList
+      call mqcMat_mL%print(header='CJD - Multiplicity List (Final)')
+!     call mqc_print(iOut,mqcMat_mL,header='Multiplicity List (Final)')
+      mqcMat_pOM = populationsOverMultiplicities
+      call mqcMat_pOM%print(header='CJD - Sum of Squares of Amplitudes Over Spin Subspaces')
+!     call mqc_print(iOut,mqcMat_pOM,header='Sum of Squares of Amplitudes Over Spin Subspaces')
+!CJD-
       write(iOut,*)' Hrant - SUM = ',SUM(populationsOverMultiplicities)
 !
       return

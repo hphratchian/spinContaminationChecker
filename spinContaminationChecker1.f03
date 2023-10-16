@@ -51,6 +51,9 @@ INCLUDE 'hphSpinFun_mod.f03'
         CAlpha,CBeta
       type(MQC_R4Tensor)::tmpR4
       Type(MQC_Determinant)::Determinants
+      type(MQC_Variable)::mqcMat_pA,mqcMat_pB,mqcMat_tmp2NBS,mqcMat_S2,  &
+        mqcMat_S2_Symm,mqcMat_tmpEVals,mqcMat_tmpEVecs,  &
+        tempMQCvar1,tempMQCvar2
 !
 !     Format Statements
 !
@@ -96,8 +99,14 @@ INCLUDE 'hphSpinFun_mod.f03'
       write(*,*)'         correspondingOrbitals = ',correspondingOrbitals
       write(*,*)'         nFrozenCore           = ',nFrozenCore
       write(*,*)'         nFrozenVirtual        = ',nFrozenVirtual
-      call mqc_print(iOut,permuteAlpha,header='Alpha Permutations')
-      call mqc_print(iOut,permuteBeta,header='Beta Permutations')
+!CJD+
+!     mqcMat_pA = permuteAlpha
+!     call mqcMat_pA%print(header='CJD - Alpha Permutations')
+!     call mqc_print(iOut,mqcMat_pA,header='Alpha Permutations')
+!     mqcMat_pB = permuteBeta
+!     call mqcMat_pB%print(header='CJD - Beta Permutations')
+!     call mqc_print(iOut,mqcMat_pB,header='Beta Permutations')
+!CJD-
 !hph-
 
 !hph+
@@ -341,8 +350,12 @@ INCLUDE 'hphSpinFun_mod.f03'
       do i = 1,2*nBasis
         tmp2NBasisSq(i,i) = float(1)
       endDo
+!CJD+
+      mqcMat_tmp2NBS = tmp2NBasisSq
       if(iPrint.ge.0.or.DEBUG)  &
-        call mqc_print(iOut,tmp2NBasisSq,header='Full MO-MO Overlap')
+        call mqcMat_tmp2NBS%print(header='CJD - Full MO-MO Overlap')
+!       call mqc_print(iOut,mqcMat_tmp2NBS,header='Full MO-MO Overlap')
+!CJD-
       call flush(iOut)
 !
 !     Pre-process the string list combinations for the S2 matrix element
@@ -409,8 +422,12 @@ INCLUDE 'hphSpinFun_mod.f03'
       write(iOut,5000) 'S2 Matrix Formation',t2A-t1A
       DeAllocate(stringLeftAlpha,stringLeftBeta,stringRightAlpha,  &
         stringRightBeta)
+!CJD+
+      mqcMat_S2 = S2_Mat
       if(iPrint.ge.2.or.DEBUG)  &
-        call mqc_print(iOut,S2_Mat,header='S2 Matrix (FULL)')
+        call mqcMat_S2%print(header='CJD - S2 Matrix (FULL)')
+!       call mqc_print(iOut,mqcMat_S2,header='S2 Matrix (FULL)')
+!CJD-
       call flush(iOut)
 !
 !     Diagonalize S2_Mat and report the eigenvalues.
@@ -425,7 +442,12 @@ INCLUDE 'hphSpinFun_mod.f03'
           S2_MatSymm(k) = S2_Mat(i,j)
         endDo
       endDo
-      if(DEBUG) call mqc_print(iOut,mqc_matrixSymm2Full(S2_MatSymm,'L'),header='S2 Matrix from Symm')
+!CJD+
+      mqcMat_S2_Symm = mqc_matrixSymm2Full(S2_MatSymm,'L')
+      if(DEBUG)  &
+        call mqcMat_S2_Symm%print(header='CJD - S2 Matrix from Symm')
+!       call mqc_print(iOut,mqcMat_S2_Symm,header='S2 Matrix from Symm')
+!CJD-
       write(iOut,*)' k = ',k
       write(iOut,*)' nDetTT = ',nDetTT
       write(iOut,*)
@@ -442,11 +464,23 @@ INCLUDE 'hphSpinFun_mod.f03'
       do i = 1,nDetTotal
         if(ABS(tmpEVals(i)).lt.(float(1)/float(10000))) tmpEVals(i) = float(0)
       endDo
-      call mqc_print(iOut,tmpEVals,header='S2 EVals')
+!CJD+
+      mqcMat_tmpEVals = tmpEVals
+      call mqcMat_tmpEVals%print(header='CJD - S2 EVals')
+!     call mqc_print(iOut,mqcMat_tmpEVals,header='S2 EVals')
+      mqcMat_tmpEVecs = tmpEVecs
       if(iPrint.ge.2.or.DEBUG)  &
-        call mqc_print(iOut,tmpEVecs,header='S2 EVecs')
-      if(DEBUG) call mqc_print(iOut,MatMul(Transpose(tmpEVecs),MatMul(S2_Mat,tmpEVecs)),header='EVecs.S2.EVecs')
-      if(DEBUG) call mqc_print(iOut,MatMul(Transpose(tmpEVecs),tmpEVecs),header='EVecs.EVecs')
+        call mqcMat_tmpEVecs%print(header='CJD - S2 EVecs')
+!       call mqc_print(iOut,mqcMat_tmpEVecs,header='S2 EVecs')
+      tempMQCvar1 = MatMul(Transpose(tmpEVecs),MatMul(S2_Mat,tmpEVecs))
+      if(DEBUG)  &
+        call tempMQCvar1%print(header='CJD - EVecs.S2.EVecs')
+!       call mqc_print(iOut,tempMQCvar1,header='EVecs.S2.EVecs')
+      tempMQCvar2 = MatMul(Transpose(tmpEVecs),tmpEVecs)
+      if(DEBUG)  &
+        call tempMQCvar2%print(header='CJD - EVecs.EVecs')
+!       call mqc_print(iOut,tempMQCvar2,header='EVecs.EVecs')
+!CJD-
       write(iOut,*)
       write(iOut,*)' nDetTotal = ',nDetTotal
       call flush(iOut)
@@ -471,3 +505,4 @@ INCLUDE 'hphSpinFun_mod.f03'
       call cpu_time(t2)
       write(iOut,5000) 'TOTAL JOB',t2-t1
       end program spinContaminationChecker
+
